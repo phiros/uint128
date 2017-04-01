@@ -52,21 +52,20 @@ func (u *Uint128) Xor(o *Uint128) {
 	u.L ^= o.L
 }
 
+// See: https://www.codeproject.com/Tips/617214/UInt-Addition-Subtraction
+// for an explanation
 func (u *Uint128) Add(o *Uint128) {
-	carryL := u.L
-	carryH := u.H
-	u.L += o.L
-	u.H += o.H
+	var C uint64 = (((u.L & o.L) & 1) + (u.L >> 1) + (o.L >> 1)) >> 63
+	u.H += o.H + C
+	u.L = u.L + o.L
+}
 
-	if u.L < carryL {
-		u.H += 1
-	}
-
-	if u.H < carryH {
-		overflow := u.H
-		u.L += overflow
-		u.H -= overflow
-	}
+// See: https://www.codeproject.com/Tips/617214/UInt-Addition-Subtraction
+// for an explanation
+func (u *Uint128) Sub(o *Uint128) {
+	u.L = u.L - o.L
+	var C uint64 = (((u.L & o.L) & 1) + (o.L >> 1) + (u.L >> 1)) >> 63
+	u.H -= o.H + C
 }
 
 func NewFromUint64(uint64 uint64) *Uint128 {

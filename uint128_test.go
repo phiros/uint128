@@ -192,3 +192,21 @@ func TestUint128_Add(t *testing.T) {
 		t.Error("expected MaxUint128 - 1 but got", u128numberMax1.H, u128numberMax1.L)
 	}
 }
+
+func TestUint128_Sub(t *testing.T) {
+	var maxUint128Bytes []byte = []byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+					    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
+
+
+	u128numberMax, _ := NewFromBigEndianBytes(maxUint128Bytes)
+	u128numberMax.Sub(NewFromUint64(1))
+	if u128numberMax.H != 0xffffffffffffffff || u128numberMax.L != 0xfffffffffffffffe {
+		t.Error("expected MaxUint128 -1 but got", u128numberMax.H, u128numberMax.L)
+	}
+
+	u128numberZero := NewFromUint64(0)
+	u128numberZero.Sub(NewFromUint64(1))
+	if u128numberZero.H != 0xffffffffffffffff || u128numberZero.L != 0xffffffffffffffff {
+		t.Error("expected MaxUint128 but got", u128numberZero.H, u128numberZero.L)
+	}
+}

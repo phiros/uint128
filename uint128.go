@@ -13,6 +13,7 @@ const (
 	greaterThan
 
 	Len = 32
+	LenBytes = 16
 )
 
 // Big endian uint128
@@ -52,13 +53,27 @@ func (u *Uint128) Xor(o *Uint128) {
 }
 
 func (u *Uint128) Add(o *Uint128) {
-	carry := u.L
+	carryL := u.L
+	carryH := u.H
 	u.L += o.L
 	u.H += o.H
 
-	if u.L < carry {
+	if u.L < carryL {
 		u.H += 1
 	}
+
+	if u.H < carryH {
+		overflow := u.H
+		u.L += overflow
+		u.H -= overflow
+	}
+}
+
+func NewFromUint64(uint64 uint64) *Uint128 {
+	u := new(Uint128)
+	u.L = uint64
+	u.H = 0
+	return u
 }
 
 func NewFromString(s string) (u *Uint128, err error) {
@@ -75,6 +90,22 @@ func NewFromString(s string) (u *Uint128, err error) {
 	u = new(Uint128)
 	err = binary.Read(rdr, binary.BigEndian, u)
 	return
+}
+
+func NewFromBigEndianBytes(b []byte) (u *Uint128, err error) {
+	if len(b) > LenBytes {
+		return nil, fmt.Errorf("length greater than 16 bytes")
+	}
+	rdr := bytes.NewReader(b)
+	u = new(Uint128)
+	err = binary.Read(rdr, binary.BigEndian, u)
+	return
+}
+
+func (u *Uint128) BigEndianBytes() []byte {
+	buf := new(bytes.Buffer)
+	binary.Write(buf, binary.BigEndian, u)
+	return buf.Bytes()
 }
 
 func (u *Uint128) HexString() string {

@@ -200,3 +200,17 @@ func TestUint128_Sub(t *testing.T) {
 		t.Errorf("expected MaxUint128 but got %x, %x", u128numberZero.H, u128numberZero.L)
 	}
 }
+
+func TestMethodChaining(t *testing.T) {
+	u128numberMax := MaxUint128
+	u128numberMax = u128numberMax.Sub(NewFromUint64(1)).Add(NewFromUint64(1))
+	if u128numberMax.H != 0xffffffffffffffff || u128numberMax.L != 0xffffffffffffffff {
+		t.Error("expected MaxUint128 but got", u128numberMax.H, u128numberMax.L)
+	}
+
+	u128numberOne := NewFromUint64(0)
+	num := u128numberOne.Sub(MaxUint128)
+	if u128numberOne.Sub(MaxUint128).Compare(NewFromUint64(0).Add(NewFromUint64(1))) != 0  {
+		t.Errorf("expected 1 but got %x, %x", num.H, num.L)
+	}
+}

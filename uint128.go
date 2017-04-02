@@ -26,7 +26,7 @@ type Uint128 struct {
 	H, L uint64
 }
 
-func (u *Uint128) Compare(o Uint128) int {
+func (u Uint128) Compare(o Uint128) int {
 	if u.H < o.H {
 		return lessThan
 	} else if u.H > o.H {
@@ -42,19 +42,19 @@ func (u *Uint128) Compare(o Uint128) int {
 	return equal
 }
 
-func (u *Uint128) And(o Uint128) (ans Uint128) {
+func (u Uint128) And(o Uint128) (ans Uint128) {
 	ans.H = u.H & o.H
 	ans.L = u.L & o.L
 	return
 }
 
-func (u *Uint128) Or(o Uint128) (ans Uint128) {
+func (u Uint128) Or(o Uint128) (ans Uint128) {
 	ans.H = u.H | o.H
 	ans.L = u.L | o.L
 	return
 }
 
-func (u *Uint128) Xor(o Uint128) (ans Uint128) {
+func (u Uint128) Xor(o Uint128) (ans Uint128) {
 	ans.H = u.H ^ o.H
 	ans.L = u.L ^ o.L
 	return
@@ -62,7 +62,7 @@ func (u *Uint128) Xor(o Uint128) (ans Uint128) {
 
 // See: https://www.codeproject.com/Tips/617214/UInt-Addition-Subtraction
 // for an explanation
-func (u *Uint128) Add(o Uint128) (ans Uint128) {
+func (u Uint128) Add(o Uint128) (ans Uint128) {
 	var C uint64 = (((u.L & o.L) & 1) + (u.L >> 1) + (o.L >> 1)) >> 63
 	ans.H = u.H + o.H + C
 	ans.L = u.L + o.L
@@ -71,7 +71,7 @@ func (u *Uint128) Add(o Uint128) (ans Uint128) {
 
 // See: https://www.codeproject.com/Tips/617214/UInt-Addition-Subtraction
 // for an explanation
-func (u *Uint128) Sub(o Uint128) (ans Uint128) {
+func (u Uint128) Sub(o Uint128) (ans Uint128) {
 	ans.L = u.L - o.L
 	var C uint64 = (((ans.L & o.L) & 1) + (o.L >> 1) + (ans.L >> 1)) >> 63
 	ans.H = u.H - (o.H + C)
@@ -108,19 +108,19 @@ func NewFromBigEndianBytes(b []byte) (ans Uint128, err error) {
 	return ans, err
 }
 
-func (u *Uint128) BigEndianBytes() []byte {
+func (u Uint128) BigEndianBytes() []byte {
 	buf := new(bytes.Buffer)
 	binary.Write(buf, binary.BigEndian, u)
 	return buf.Bytes()
 }
 
-func (u *Uint128) HexString() string {
+func (u Uint128) HexString() string {
 	if u.H == 0 {
 		return fmt.Sprintf("%x", u.L)
 	}
 	return fmt.Sprintf("%x%016x", u.H, u.L)
 }
 
-func (u *Uint128) String() string {
+func (u Uint128) String() string {
 	return fmt.Sprintf("0x%032x", u.HexString())
 }

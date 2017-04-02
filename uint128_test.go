@@ -90,9 +90,7 @@ func TestUint128_BigEndianBytes(t *testing.T) {
 							  0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15}
 	var expectedDescendingBytesPattern []byte = []byte{0xff, 0xfe, 0xfd, 0xfc, 0xfb, 0xfa, 0xf0, 0xf9,
 							   0xf8, 0xf7, 0xf6, 0xf5, 0xf4, 0xf3, 0xf2, 0xf1}
-	var uint128 *Uint128 = new(Uint128)
-	uint128.H = math.MaxUint64
-	uint128.L = math.MaxUint64
+	var uint128 Uint128 = MaxUint128
 
 	var actualBytes = uint128.BigEndianBytes()
 	if bytes.Compare(actualBytes, expectedBytesMaxUint128) != 0 {
@@ -169,24 +167,20 @@ func TestNewFromUint64(t *testing.T) {
 }
 
 func TestUint128_Add(t *testing.T) {
-	var maxUint128Bytes []byte = []byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-					    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
-
-
 	var u128number = NewFromUint64(math.MaxUint64)
 	u128number = u128number.Add(NewFromUint64(1))
 	if u128number.H != 1 || u128number.L != 0 {
 		t.Error("expected MaxUint64 + 1 but got", u128number.H, u128number.L)
 	}
 
-	u128numberMax, _ := NewFromBigEndianBytes(maxUint128Bytes)
+	u128numberMax := MaxUint128
 	u128numberMax = u128numberMax.Add(NewFromUint64(1))
 	if u128numberMax.H != 0 || u128numberMax.L != 0 {
 		t.Error("expected MaxUint128 + 1 = 0 but got", u128numberMax.H, u128numberMax.L)
 	}
 
-	u128numberMax1, _ := NewFromBigEndianBytes(maxUint128Bytes)
-	u128numberMax2, _ := NewFromBigEndianBytes(maxUint128Bytes)
+	u128numberMax1 := MaxUint128
+	u128numberMax2 := MaxUint128
 	u128numberMax1 = u128numberMax1.Add(u128numberMax2)
 	if u128numberMax1.H != 0xffffffffffffffff || u128numberMax1.L != 0xfffffffffffffffe {
 		t.Error("expected MaxUint128 - 1 but got", u128numberMax1.H, u128numberMax1.L)
@@ -194,11 +188,7 @@ func TestUint128_Add(t *testing.T) {
 }
 
 func TestUint128_Sub(t *testing.T) {
-	var maxUint128Bytes []byte = []byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-					    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
-
-
-	u128numberMax, _ := NewFromBigEndianBytes(maxUint128Bytes)
+	u128numberMax := MaxUint128
 	u128numberMax = u128numberMax.Sub(NewFromUint64(1))
 	if u128numberMax.H != 0xffffffffffffffff || u128numberMax.L != 0xfffffffffffffffe {
 		t.Error("expected MaxUint128 -1 but got", u128numberMax.H, u128numberMax.L)
@@ -206,7 +196,7 @@ func TestUint128_Sub(t *testing.T) {
 
 	u128numberZero := NewFromUint64(0)
 	u128numberZero = u128numberZero.Sub(NewFromUint64(1))
-	if u128numberZero.H != 0xffffffffffffffff || u128numberZero.L != 0xffffffffffffffff {
+	if u128numberZero.H != math.MaxUint64 || u128numberZero.L != math.MaxUint64 {
 		t.Errorf("expected MaxUint128 but got %x, %x", u128numberZero.H, u128numberZero.L)
 	}
 }

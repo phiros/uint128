@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"math"
 )
 
 const (
@@ -14,6 +15,10 @@ const (
 
 	Len = 32
 	LenBytes = 16
+)
+
+var (
+	MaxUint128 = Uint128{ math.MaxUint64, math.MaxUint64}
 )
 
 // Big endian uint128

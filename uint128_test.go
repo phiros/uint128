@@ -76,7 +76,7 @@ func TestXor(t *testing.T) {
 
 		t.Log(s, x, cmp)
 
-		s.Xor(x)
+		s = s.Xor(x)
 		if s.Compare(cmp) != 0 {
 			t.Error("failed xor at", entry, s, x, cmp)
 		}
@@ -174,20 +174,20 @@ func TestUint128_Add(t *testing.T) {
 
 
 	var u128number = NewFromUint64(math.MaxUint64)
-	u128number.Add(NewFromUint64(1))
+	u128number = u128number.Add(NewFromUint64(1))
 	if u128number.H != 1 || u128number.L != 0 {
 		t.Error("expected MaxUint64 + 1 but got", u128number.H, u128number.L)
 	}
 
 	u128numberMax, _ := NewFromBigEndianBytes(maxUint128Bytes)
-	u128numberMax.Add(NewFromUint64(1))
+	u128numberMax = u128numberMax.Add(NewFromUint64(1))
 	if u128numberMax.H != 0 || u128numberMax.L != 0 {
 		t.Error("expected MaxUint128 + 1 = 0 but got", u128numberMax.H, u128numberMax.L)
 	}
 
 	u128numberMax1, _ := NewFromBigEndianBytes(maxUint128Bytes)
 	u128numberMax2, _ := NewFromBigEndianBytes(maxUint128Bytes)
-	u128numberMax1.Add(u128numberMax2)
+	u128numberMax1 = u128numberMax1.Add(u128numberMax2)
 	if u128numberMax1.H != 0xffffffffffffffff || u128numberMax1.L != 0xfffffffffffffffe {
 		t.Error("expected MaxUint128 - 1 but got", u128numberMax1.H, u128numberMax1.L)
 	}
@@ -199,14 +199,14 @@ func TestUint128_Sub(t *testing.T) {
 
 
 	u128numberMax, _ := NewFromBigEndianBytes(maxUint128Bytes)
-	u128numberMax.Sub(NewFromUint64(1))
+	u128numberMax = u128numberMax.Sub(NewFromUint64(1))
 	if u128numberMax.H != 0xffffffffffffffff || u128numberMax.L != 0xfffffffffffffffe {
 		t.Error("expected MaxUint128 -1 but got", u128numberMax.H, u128numberMax.L)
 	}
 
 	u128numberZero := NewFromUint64(0)
-	u128numberZero.Sub(NewFromUint64(1))
+	u128numberZero = u128numberZero.Sub(NewFromUint64(1))
 	if u128numberZero.H != 0xffffffffffffffff || u128numberZero.L != 0xffffffffffffffff {
-		t.Error("expected MaxUint128 but got", u128numberZero.H, u128numberZero.L)
+		t.Errorf("expected MaxUint128 but got %x, %x", u128numberZero.H, u128numberZero.L)
 	}
 }

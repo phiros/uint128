@@ -37,40 +37,39 @@ func (u *Uint128) Compare(o Uint128) int {
 	return equal
 }
 
-func (u *Uint128) And(o Uint128) {
-	u.H &= o.H
-	u.L &= o.L
+func (u *Uint128) And(o Uint128) (ans Uint128) {
+	ans.H = u.H & o.H
+	ans.L = u.L & o.L
+	return
 }
 
-func (u *Uint128) Or(o Uint128) {
-	u.H |= o.H
-	u.L |= u.L
+func (u *Uint128) Or(o Uint128) (ans Uint128) {
+	ans.H = u.H | o.H
+	ans.L = u.L | o.L
+	return
 }
 
-func (u *Uint128) Xor(o Uint128) {
-	u.H ^= o.H
-	u.L ^= o.L
+func (u *Uint128) Xor(o Uint128) (ans Uint128) {
+	ans.H = u.H ^ o.H
+	ans.L = u.L ^ o.L
+	return
 }
 
 // See: https://www.codeproject.com/Tips/617214/UInt-Addition-Subtraction
 // for an explanation
 func (u *Uint128) Add(o Uint128) (ans Uint128) {
 	var C uint64 = (((u.L & o.L) & 1) + (u.L >> 1) + (o.L >> 1)) >> 63
-	u.H += o.H + C
-	u.L = u.L + o.L
-	ans.H = u.H
-	ans.L = u.L
+	ans.H = u.H + o.H + C
+	ans.L = u.L + o.L
 	return ans
 }
 
 // See: https://www.codeproject.com/Tips/617214/UInt-Addition-Subtraction
 // for an explanation
 func (u *Uint128) Sub(o Uint128) (ans Uint128) {
-	u.L = u.L - o.L
-	var C uint64 = (((u.L & o.L) & 1) + (o.L >> 1) + (u.L >> 1)) >> 63
-	u.H -= o.H + C
-	ans.H = u.H
-	ans.L = u.L
+	ans.L = u.L - o.L
+	var C uint64 = (((ans.L & o.L) & 1) + (o.L >> 1) + (ans.L >> 1)) >> 63
+	ans.H = u.H - (o.H + C)
 	return
 }
 
@@ -95,13 +94,13 @@ func NewFromString(s string) (u Uint128, err error) {
 	return
 }
 
-func NewFromBigEndianBytes(b []byte) (u Uint128, err error) {
+func NewFromBigEndianBytes(b []byte) (ans Uint128, err error) {
 	if len(b) > LenBytes {
 		return NewFromUint64(0), fmt.Errorf("length greater than 16 bytes")
 	}
 	rdr := bytes.NewReader(b)
-	err = binary.Read(rdr, binary.BigEndian, &u)
-	return u, err
+	err = binary.Read(rdr, binary.BigEndian, &ans)
+	return ans, err
 }
 
 func (u *Uint128) BigEndianBytes() []byte {

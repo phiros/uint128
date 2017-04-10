@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
+	"strconv"
 )
 
 const (
@@ -123,4 +124,11 @@ func (u Uint128) HexString() string {
 
 func (u Uint128) String() string {
 	return fmt.Sprintf("0x%032x", u.HexString())
+}
+
+func (u Uint128) BinaryString() string {
+	var buffer bytes.Buffer
+	buffer.WriteString(strconv.FormatUint(u.H, 2))
+	buffer.WriteString(strconv.FormatUint(u.L, 2))
+	return buffer.String()
 }

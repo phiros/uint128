@@ -128,7 +128,15 @@ func (u Uint128) String() string {
 
 func (u Uint128) BinaryString() string {
 	var buffer bytes.Buffer
-	buffer.WriteString(strconv.FormatUint(u.H, 2))
-	buffer.WriteString(strconv.FormatUint(u.L, 2))
+	strH := strconv.FormatUint(u.H, 2)
+	strL := strconv.FormatUint(u.L, 2)
+	for i:= len(strH); i < 64; i++ {
+		buffer.WriteString("0")
+	}
+	buffer.WriteString(strH)
+	for i := len(strL); i < 64; i++ {
+		buffer.WriteString("0")
+	}
+	buffer.WriteString(strL)
 	return buffer.String()
 }
